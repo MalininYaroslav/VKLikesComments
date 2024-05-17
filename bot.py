@@ -5,28 +5,24 @@ import subprocess
 try:
     import requests
     import vk_api
-    import vktoken
 except ImportError:
     system('pip install -r requirements.txt')
     import vk_api
     import requests
 
 config = {
-    "login": "",
-    "password": ""
+    "login": '',
+    "password": ''
 }
 
 
 # Аунтефикация в вк
 def vk_login() -> vk_api.VkApi.get_api:
     try:
-        result = subprocess.run(f'vktoken --app iphone {config["login"]} {config["password"]}',
-                                shell=True,
-                                capture_output=True,
-                                text=True)
-        if "need" in result.stdout.lower() or "error" in result.stdout.lower() or result.stdout == "":
-            raise Exception(result.stdout)
-        vk_session = vk_api.VkApi(token=result.stdout)
+        vk_session = vk_api.VkApi(login=config['login'], password=config['password'], app_id=6287487, scope=1073737727)
+        vk_session.auth()
+        print(f"\033[2;36m[{datetime.now().strftime('%H:%M:%S.%f %d.%m.%Y')}]"
+              f" \033[1;31m[INFO]\033[0m Successful authentication")
         return vk_session.get_api()
     except Exception as e:
         print(f"\033[2;36m[{datetime.now().strftime('%H:%M:%S.%f %d.%m.%Y')}] \033[1;31m[ERROR]\033[0m {e}")
